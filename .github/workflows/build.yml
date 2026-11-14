@@ -3,6 +3,8 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,12 +18,23 @@ jobs:
         run: chmod +x ./gradlew
       - name: Compilar APK (debug firmado)
         run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
-      - name: Renombrar APK con la version
+      - name: Preparar APK con nombre fijo
         run: |
           mkdir -p salida
-          cp app/build/outputs/apk/debug/app-debug.apk "salida/ClickTV-$(date +%Y%m%d-%H%M)-debug.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk salida/ClickTV.apk
+      - name: Leer numero de version
+        id: ver
+        run: |
+          VC=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts)
+          echo "vc=$VC" >> "$GITHUB_OUTPUT"
+      - name: Publicar Release con el APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.vc }}
+          name: ClickTV ${{ steps.ver.outputs.vc }}
+          files: salida/ClickTV.apk
+          fail_on_unmatched_files: true
       - uses: actions/upload-artifact@v4
         with:
           name: ClickTV-APK
-          path: salida/*.apk
-          if-no-files-found: error
+          path: salida/ClickTV.apk
