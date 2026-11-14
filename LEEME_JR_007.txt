@@ -1,0 +1,25 @@
+JR PLAYER 007 — QR FIX (DIBUJO DIRECTO)
+
+Base: JR Player 006 CONTROL DESDE CELULAR.
+Package: com.tvnetsolutions.jrplayer (idéntico a JR005/006)
+VersionCode: 7. VersionName: JR.007.
+
+Cambio acotado a MainActivity.kt / QR:
+- Se dibuja el QR directamente en un View/Canvas, sin crear un Bitmap intermedio.
+- QRCodeWriter genera una matriz QR con margen y codificación UTF-8.
+- Si hay una excepción al generar el QR, se registra stack trace con etiqueta JR_QR,
+  se muestra la clase del error y el enlace temporal como recurso de diagnóstico.
+- El enlace y token siguen siendo temporales, de un solo uso y con 10 minutos.
+
+NO se han modificado JRRemoteServer.kt, JrEngine.kt, BootReceiver,
+configuración de inicio, guía, lista M3U, red, panel web ni lógica de seguridad.
+
+PRUEBA: Compilar con Android Studio. Instalar con adb install -r SOLO en
+la Kanji secundaria 192.168.0.108; no desinstalar/limpiar datos y no tocar
+la maestra 192.168.0.105. Ir a MENU -> Control desde celular -> Vincular.
+
+Si sigue fallando, ejecutar logcat -d -s JR_QR:E después del intento y
+compartir la traza; contiene la excepción real, a diferencia del mensaje 'null'.
+
+Limitación: No se puede construir APK Android completa en este entorno por
+falta de Android SDK/Gradle. Se requieren compilación y validación real.

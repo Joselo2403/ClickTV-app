@@ -1,0 +1,48 @@
+CLICK TV 012 — MENÚ TÉCNICO OCULTO / BASE ESTABLE 010
+====================================================
+
+ORIGEN
+- Basado EXCLUSIVAMENTE en Click TV 010 recuperada y validada en la maestra
+  192.168.101.6 el 23/10/2026. NO usa la lógica de Click TV 011.
+- applicationId: com.tvnetsolutions.jrplayer, versionCode: 12, versionName: ClickTV.012.
+
+CAMBIOS LIMITADOS
+- Cinco pulsaciones rápidas de MENU o SETTINGS abren el menú técnico.
+- Una sola pulsación no abre ajustes. Una pulsación sostenida no cuenta varias veces.
+- En caso de lista vacía/fallo DNS, pantalla pública SIN SEÑAL o SIN CANALES,
+  sin botones de administración; el menú técnico sí se puede abrir con MENU x5.
+- Con lista vacía y URL configurada se reintenta descargar cada 60 segundos.
+- BACK en pantalla sin canales no expone el launcher de emergencia.
+
+SIN CAMBIOS RESPECTO A 010 (COMPROBAR DIFF)
+- JrEngine (ExoPlayer), M3uParser, PlaylistRepository, JrRemoteServer,
+  CookieAwareDataSource, BootReceiver, AndroidManifest, splash, iconos,
+  logos, red, control desde celular, QR, sistema HOME y arranque.
+- Sin cambios en almacenamiento de configuración, URL de la lista,
+  último canal, tokens ni datos de usuarios.
+
+PRUEBAS Y REGRESIÓN
+- tests/TechnicalMenuGestureTest.kt comprueba la secuencia sin Android.
+- Comprobar con canales funcionando: MENU x1 NO abre, MENU x5 SÍ abre,
+  OK/guía/flechas/volumen siguen funcionando y los canales reproducen.
+- Probar MENU x5 cuando no hay lista SOLO en entorno de ensayo, no borrar datos.
+- Tras actualizar, desconectar ADB y reiniciar con control remoto.
+- Si hay un fallo: se incluye la APK EXACTA de la 010 que el usuario instaló
+  correctamente (SHA256 ce9573dda90739eafe9250925bfe683ff86be6c4e173215892231e2b9908671e).
+  El script de recuperación utiliza install -r -d, SIN desinstalación.
+  Android puede rechazar el downgrade; NO usar uninstall para forzarlo.
+
+PROCEDIMIENTO
+1. 00_DIAGNOSTICO_MAESTRA.cmd: comprobar la versión y HOME actual.
+2. Abrir la carpeta ClickTV012 en Android Studio y compilar Build > Build APK(s).
+3. 02_INSTALAR_MAESTRA.cmd. No tocar las diez cajas.
+4. Verificar canal, menú oculto y BACK; recién después probar reinicio real.
+5. 04_CERRAR_ADB.cmd y reiniciar desde el control remoto.
+6. Si la app falla, utilizar 03_RESTAURAR_010_SOLO_SI_FALLA.cmd.
+
+ATENCIÓN
+- Este entorno no tiene SDK Android/Gradle para compilar APK; el paquete
+  entregado es código fuente y APK de recuperación 010, NO una APK 012.
+- No hemos diagnosticado si el host canales.multisenal.site está accesible.
+  Un error de DNS NO se soluciona alterando el menú oculto.
+- No clonar las diez cajas hasta probar arranque y reproducción completa.

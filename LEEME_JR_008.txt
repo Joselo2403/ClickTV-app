@@ -1,0 +1,44 @@
+JR PLAYER 008 — ACCESO LOCAL A WI-FI Y VERSION VISIBLE
+13/10/2026
+
+Base: JR Player 007 QR FIX. Mismo applicationId com.tvnetsolutions.jrplayer.
+VersionCode 8; versionName JR.008. Se instala encima de JR005, JR006 o JR007
+con adb install -r y firma compatible, SIN desinstalar ni borrar los datos.
+
+CAMBIOS AISLADOS
+1. MENÚ -> AJUSTES -> Configurar Wi-Fi (Android): abre la pantalla Wi-Fi
+   del sistema. Si el firmware no la implementa, intenta la pantalla de
+   redes y finalmente Ajustes generales de Android.
+2. MENÚ -> AJUSTES -> Ajustes completos de Android: acceso alternativo
+   para equipos cuyo Wi-Fi sólo aparece en los ajustes generales.
+3. La versión visible en mensajes, diagnóstico, bienvenida, QR y Acerca de
+   JR Player se toma de BuildConfig.VERSION_NAME; eliminados rótulos
+   fijos JR006 que sobrevivían en JR007. Nombre app: JR Intercom Player 008.
+
+NO CAMBIADO
+Reproductor ExoPlayer HLS/MP4, lista M3U y guía, QR y seguridad del panel
+celular, servidor HTTP LAN, arranque HOME/BootReceiver, splash, logos,
+canal inicial, particiones y firmware.
+
+PRUEBA IMPRESCINDIBLE EN KANJI ANTES DE MOVER DE RED
+1. Compilar APK debug en Android Studio. Si se usa APK de debug, firmarla
+   con la misma clave que la instalada; error de firma: NO desinstalar.
+2. Probar primero SOLO en segunda Kanji (antes 192.168.0.108), confirmar
+   arranque, canales y QR; no tocar la maestra hasta validar.
+3. MENÚ -> Configurar Wi-Fi (Android): confirmar que el control remoto
+   permite seleccionar redes y escribir contraseñas. Presionar VOLVER
+   para regresar a JR. Si abre pantalla incorrecta o no responde,
+   probar MENÚ -> Ajustes completos de Android.
+4. Probar también el acceso al menú SIN Internet, por ejemplo con el router
+   temporalmente sin salida a Internet; no hace falta desconectar el Wi-Fi.
+5. Tras cambiar a una red nueva la IP y la URL http://IP:8096/ cambian;
+   el teléfono debe estar en la misma LAN; la autorización del navegador
+   debería persistir, pero el atajo con la IP antigua deberá actualizarse.
+6. Verificar Acerca de JR Player -> JR.008. Sólo entonces preparar otras cajas.
+
+LIMITACIONES
+- La pantalla Wi-Fi es del sistema Android. Algunos firmwares Kanji pueden
+  impedir abrirla o requerir un control/teclado distinto: probar en hardware.
+- Este ZIP contiene CODIGO FUENTE, NO APK.
+- No se ha podido compilar y ejecutar APK completa en este entorno por falta
+  de Android SDK y Gradle. No afirmar validación real sin ensayo en la caja.

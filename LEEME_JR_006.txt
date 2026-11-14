@@ -1,0 +1,73 @@
+JR INTERCOM PLAYER 006 — CONTROL DESDE CELULAR / VINCULACIÓN PERSISTENTE
+Fecha: 13/10/2026
+BASE CONSERVADA: JR Player 005 (splash, autoarranque/HOME, HLS/MP4, guía,
+lista M3U, canal inicial configurable y controles multimedia originales).
+
+IDENTIDAD
+Package: com.tvnetsolutions.jrplayer
+versionCode: 6
+versionName: JR.006
+Proyecto: JR-Player-006
+Se instala como actualización sobre JR005 SI ambos APK tienen la misma firma.
+NO desinstalar JR005 si Android rechaza la actualización por firma.
+
+NOVEDAD
+• MENU del control → Ajustes → Control desde celular.
+• Opción Vincular nuevo celular (QR). Se muestra sólo a pedido y caduca a
+  los 10 minutos; al completar la vinculación desaparece automáticamente.
+• La primera vez, escanear desde el celular y pulsar «Autorizar este celular».
+• Guardar acceso directo a http://IP_DE_KANJI:8096/ en el navegador.
+• En visitas posteriores, entrar al acceso directo SIN volver a usar QR.
+• La Kanji conserva autorización de hasta 10 celulares; se pueden revocar
+  individualmente desde el menú del televisor.
+• Panel en el celular: lista de canales, canal anterior/siguiente,
+  pausa/play, ±10s cuando la señal es seekable, volver al vivo y volumen
+  INTERNO de ExoPlayer (no necesariamente volumen físico del televisor).
+• Los comandos llaman al motor y funciones de JR005, sin crear otro player.
+• Si no hay red, aparece SIN RED / Esperando conexión.
+
+SEGURIDAD
+• Emite un token aleatorio de un solo uso durante la vinculación.
+• Nunca incluye el token en una solicitud GET: el QR usa el fragmento #pair.
+• Credencial aleatoria individual de 256 bits por teléfono, guardada en una
+  cookie persistente HttpOnly/SameSite=Strict; el servidor almacena sólo
+  su hash SHA-256 en SharedPreferences privada de Android.
+• Revocar un celular invalida su credencial; reautorizar requiere nuevo QR.
+• Peticiones y comandos verifican la credencial; POST además verifica Origin.
+• Filtro de direcciones IPv4 privadas y Host actual; sin acceso directo
+  desde Internet, sin nube y sin exponer canales a visitantes anónimos.
+• IMPORTANTE: el servidor usa HTTP local (NO HTTPS): usar exclusivamente
+  en Wi-Fi/LAN confiable, no en una red pública o de invitados.
+• Recomendación: reservar IP de cada Kanji en el router para que el acceso
+  directo del navegador siga funcionando si se reinicia el equipo.
+• Si el usuario borra cookies/datos del navegador, reinstala el navegador
+  o elige otro navegador, debe vincularse nuevamente.
+• Si se borran los datos de la APK de la Kanji, también se pierden los
+  celulares autorizados y se requiere nuevo emparejamiento.
+
+COMPILAR
+1. Descomprimir ZIP.
+2. Android Studio → Open → seleccionar carpeta JR006.
+3. Esperar Sync Gradle; el proyecto utiliza Gradle 9.5.0,
+   Media3 1.8.1 y ZXing Core 3.5.3 para generar el QR.
+4. Build → Build APK(s).
+5. Instalar primero SOLO en la Kanji de prueba 192.168.0.108,
+   conservando la maestra 192.168.0.105 sin cambios.
+6. Verificar splash/reproducción, MENU → Control desde celular,
+   QR y botón Autorizar, cambio de canal, revocación, reinicio real,
+   persistencia del acceso SIN QR y guía con el control remoto.
+7. No incorporar JR006 al kit de clonación hasta completar todas las pruebas.
+
+LIMITACIÓN DE ESTE ENTORNO
+No hay Android SDK ni distribución Gradle 9.5.0 disponible para compilar
+la APK completa. Se comprobó el parser M3U con kotlinc, se compiló
+JrRemoteServer.kt con stubs Android/JSON para detectar errores Kotlin,
+se validaron XML y sintaxis del panel JavaScript y se comprobó la integridad
+ZIP. La funcionalidad de red y la reproducción necesitan prueba en Kanji.
+
+REGRESIÓN / ROLLBACK
+El motor HLS/MP4 de JR005 no fue reescrito y siguen iguales las opciones
+HOME/BootReceiver del manifiesto. Ante un fallo, no tocar particiones,
+bootlogo.bmp ni /system/media/boot.mp4: todos quedan intactos.
+Reinstalar JR005 firmado de modo compatible, o recuperar con ADB
+previo respaldo; no borrar datos ni hacer factory reset a ciegas.

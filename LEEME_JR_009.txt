@@ -1,0 +1,28 @@
+JR PLAYER 009 — LISTAS CON CANALES SIN EXTENSIÓN + LISTA DESDE EL CELULAR
+19/10/2026
+
+Base: JR Player 008. Mismo applicationId com.tvnetsolutions.jrplayer.
+VersionCode 9; versionName JR.009. Se instala ENCIMA de JR008 (misma firma), sin desinstalar.
+
+PROBLEMA ENCONTRADO (lista http://canales.multisenal.site/)
+- Los canales son del tipo http://10.248.248.2:8000/cv-americatv, SIN extensión.
+- JR008 trataba toda dirección sin .mp4 como HLS (.m3u8) y forzaba ese formato.
+  Si el servidor entrega MPEG-TS directo (lo habitual en :8000), ExoPlayer no lo
+  puede leer como HLS y el canal no arranca.
+- JR008 cortaba la lista en 60 canales. La de multisenal tiene 84.
+
+CAMBIOS
+1. Detección automática: canales sin extensión se prueban primero como
+   transmisión directa (TS/MP4, ExoPlayer reconoce el formato). Si no lo es,
+   se reintenta UNA vez como HLS y se recuerda para ese canal.
+   .ts -> MPEG-TS; .m3u8 -> HLS; .mp4 -> MP4; udp:// y rtp:// sin cambios.
+2. Límite subido de 60 a 99 canales (guía, celular, teclas numéricas de 2 cifras).
+3. Panel del celular: nuevo cuadro "Lista de canales" para pegar la dirección
+   M3U y mandarla a la TV, sin escribir con el control remoto.
+
+NO CAMBIADO: QR, seguridad del panel, Wi-Fi, arranque, guía, canal al encender.
+
+IMPORTANTE: 10.248.248.2 es una dirección privada. La caja tiene que estar en
+la red donde está ese servidor; desde otra red la lista carga pero los canales no.
+
+ESTADO: revisado a mano; APK no compilada en este entorno. Probar en una caja de prueba.

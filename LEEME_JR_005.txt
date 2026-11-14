@@ -1,0 +1,44 @@
+JR INTERCOM PLAYER 005 — SPLASH + ARRANQUE KANJI + CANAL INICIAL + CONTROLES
+
+BASE: JR004. Mantiene el applicationId com.tvnetsolutions.jrplayer, lista M3U y ExoPlayer.
+NUEVO: pantalla JR Intercom aprobada para arranque de la app (3,2 segundos y fundido),
+       BootReceiver para BOOT_COMPLETED/QUICKBOOT_POWERON, HOME candidato para Kanji.
+       Ajustes > Canal al encender > Ultimo canal visto / Canal fijo por URL de canal.
+       Ajustes > Controles de reproduccion (pausa, reanudar, +/-10 segundos, volver al vivo).
+       Botones multimedia del control: PLAY/PAUSE, REW, FF si estan presentes.
+       En vivo: pausa y seek disponibles SOLO si ExoPlayer informa ventana seekable/DVR.
+       No se promete TimeShift local de 10 minutos en esta version.
+
+IMPORTANTE: Android puede restringir arranque automatico de Activities desde un receptor.
+La Kanji debe verificar arranque real tras reboot; por ADB configurar JR como HOME principal
+SOLO despues de confirmar que JR005 abre, hay acceso ADB de recuperacion y se conoce
+el package real de VELIA. No desactivar VELIA a ciegas.
+
+BUILD: abrir carpeta JR005 en Android Studio, sincronizar Gradle, Build APK(s).
+Instala encima de JR004 si usa la misma firma de depuracion; conserva canales guardados.
+En TV: MENU > Canal al encender, seleccionar Ultimo o Fijo. El canal fijo es por URL,
+para resistir reordenamiento de listas. Si desaparece, se usara ultimo visto.
+
+PROCEDIMIENTO ADB en PowerShell (ejemplo IP, remplazar por la vigente):
+$adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
+& $adb connect 192.168.0.105:5555
+& $adb -s 192.168.0.105:5555 shell monkey -p com.tvnetsolutions.jrplayer -c android.intent.category.LAUNCHER 1
+& $adb -s 192.168.0.105:5555 shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME
+# Solo si se verifica compatibilidad de la Kanji, asignar HOME JR:
+& $adb -s 192.168.0.105:5555 shell cmd package set-home-activity com.tvnetsolutions.jrplayer/com.tvnetsolutions.jr.MainActivity
+# Si no se soporta set-home-activity, revisar las aplicaciones HOME predeterminadas en Android.
+# No deshabilitar VELIA antes de verificar boot real y guardarse una via ADB confiable.
+
+PRUEBAS OBLIGATORIAS EN HARDWARE:
+1) Abrir JR005 por ADB: splash y reproduccion normal, sin congelar video.
+2) Menu > Canal al encender > Ultimo; elegir otro canal; reiniciar; comprobar.
+3) Menu > Canal al encender > Fijo; designar canal; reiniciar; comprobar.
+4) MP4: PLAY/PAUSE, REW, FF. HLS no seekable: debe mostrar aviso, no fingir DVR.
+5) GUIA y zapping de JR004: OK/flechas/OK y zapping directo conservados.
+6) Elegir HOME y reboot: JR abre automaticamente. Confirmar que VELIA no toma foco.
+7) Si falla, volver por ADB: monkey / seleccionar launcher sin tocar paquetes desconocidos.
+
+ADVERTENCIA: el splash reemplaza la pantalla dentro de la app, NO el logo del firmware.
+Código fuente entregado; no se incluye APK compilada.
+
+POSPUESTO: combinación secreta del control remoto para abrir selector de apps / ajustes técnicos (JR006).
