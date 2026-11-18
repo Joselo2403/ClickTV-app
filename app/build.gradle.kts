@@ -6,8 +6,8 @@ android {
         applicationId = "com.tvnetsolutions.jrplayer"
         minSdk = 26
         targetSdk = 35
-        versionCode = 13
-        versionName = "ClickTV.013"
+        versionCode = 14
+        versionName = "ClickTV.014"
     }
     signingConfigs {
         getByName("debug") {
