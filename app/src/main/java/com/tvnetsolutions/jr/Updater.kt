@@ -59,8 +59,12 @@ object Updater {
     }
 
     private fun fetchVersionJson(): JSONObject? {
+        // Se agrega un parametro unico (cache-buster) para saltear cualquier
+        // cache o CDN del hosting y recibir siempre el version.json mas nuevo.
+        val bust = System.currentTimeMillis()
         for (u in VERSION_URLS) {
-            val txt = runCatching { httpGet(u) }.getOrNull()
+            val sep = if (u.contains("?")) "&" else "?"
+            val txt = runCatching { httpGet("$u${sep}t=$bust") }.getOrNull()
             if (!txt.isNullOrBlank()) runCatching { return JSONObject(txt) }
         }
         return null
