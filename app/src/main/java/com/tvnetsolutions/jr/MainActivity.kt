@@ -62,6 +62,7 @@ class MainActivity : Activity() {
     private val logos = LruCache<String, Bitmap>(48)
     private lateinit var root: FrameLayout
     private var splash: View? = null
+    private var sparkles: View? = null
     private val dismissSplash = Runnable { removeSplash() }
     private lateinit var repo: PlaylistRepository
     private lateinit var engine: JrEngine
@@ -247,11 +248,20 @@ class MainActivity : Activity() {
         }
         root.addView(splashImage, FrameLayout.LayoutParams(-1, -1))
         splash = splashImage
+        // Capa de destellos de fibra optica sobre el logo (muy liviana).
+        val fx = SparkleView(this)
+        root.addView(fx, FrameLayout.LayoutParams(-1, -1))
+        sparkles = fx
     }
 
     private fun removeSplash() {
         val overlay = splash ?: return
         splash = null
+        val fx = sparkles
+        sparkles = null
+        fx?.animate()?.alpha(0f)?.setDuration(600L)?.withEndAction {
+            (fx.parent as? FrameLayout)?.removeView(fx)
+        }?.start()
         overlay.animate().alpha(0f).setDuration(600L).withEndAction {
             (overlay.parent as? FrameLayout)?.removeView(overlay)
             if (channels.isEmpty()) welcome.requestFocus() else root.requestFocus()
