@@ -26,7 +26,9 @@ jobs:
         id: ver
         run: |
           VC=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts)
+          VN=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
           echo "vc=$VC" >> "$GITHUB_OUTPUT"
+          echo "vn=$VN" >> "$GITHUB_OUTPUT"
       - name: Publicar Release con el APK
         uses: softprops/action-gh-release@v2
         with:
@@ -34,6 +36,28 @@ jobs:
           name: ClickTV ${{ steps.ver.outputs.vc }}
           files: salida/ClickTV.apk
           fail_on_unmatched_files: true
+      - name: Generar version.json
+        run: |
+          cat > version.json <<EOF
+          {
+            "versionCode": ${{ steps.ver.outputs.vc }},
+            "versionName": "${{ steps.ver.outputs.vn }}",
+            "apkUrl": "https://github.com/Joselo2403/ClickTV-app/releases/latest/download/ClickTV.apk",
+            "notas": "Generado automaticamente por GitHub Actions"
+          }
+          EOF
+          echo "--- version.json generado: ---"
+          cat version.json
+      - name: Subir version.json al hosting (Hostinger)
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          curl --fail --silent --show-error -T version.json \
+            "ftp://$FTP_HOST/public_html/clicktv-update/version.json" \
+            --user "$FTP_USER:$FTP_PASSWORD"
+          echo "version.json subido correctamente al hosting"
       - uses: actions/upload-artifact@v4
         with:
           name: ClickTV-APK
