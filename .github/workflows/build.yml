@@ -71,9 +71,19 @@ jobs:
               --retry 5 --retry-delay 8 --retry-all-errors \
               -T "$1" "$DEST/$2" --user "$FTP_USER:$FTP_PASSWORD"
           }
+          cat > purge.php <<'PHP'
+<?php
+header('X-LiteSpeed-Purge: /clicktv-update/version.json');
+echo 'ok';
+PHP
           up version.json version.json
           up nocache.htaccess .htaccess
-          echo "version.json y .htaccess (no-cache) subidos al hosting"
+          up purge.php purge.php
+          echo "archivos subidos; disparando purga de cache LiteSpeed..."
+          curl -s --max-time 30 "https://tvnetsolutions.com/clicktv-update/purge.php" || true
+          curl -s --max-time 30 "https://www.tvnetsolutions.com/clicktv-update/purge.php" || true
+          echo ""
+          echo "purga disparada"
       - uses: actions/upload-artifact@v4
         with:
           name: ClickTV-APK
