@@ -71,11 +71,7 @@ jobs:
               --retry 5 --retry-delay 8 --retry-all-errors \
               -T "$1" "$DEST/$2" --user "$FTP_USER:$FTP_PASSWORD"
           }
-          cat > purge.php <<'PHP'
-<?php
-header('X-LiteSpeed-Purge: /clicktv-update/version.json');
-echo 'ok';
-PHP
+          printf '%s\n' '<?php' "header('X-LiteSpeed-Purge: /clicktv-update/version.json');" "echo 'ok';" > purge.php
           up version.json version.json
           up nocache.htaccess .htaccess
           up purge.php purge.php
