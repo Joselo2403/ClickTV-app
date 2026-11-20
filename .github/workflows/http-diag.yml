@@ -1,0 +1,20 @@
+name: Diag HTTP
+on:
+  workflow_dispatch:
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Headers y body
+        run: |
+          echo "===== APEX sin www (cabeceras) ====="
+          curl -sI "https://tvnetsolutions.com/clicktv-update/version.json" || true
+          echo ""
+          echo "===== WWW (cabeceras) ====="
+          curl -sI "https://www.tvnetsolutions.com/clicktv-update/version.json" || true
+          echo ""
+          echo "===== APEX con query (cabeceras) ====="
+          curl -sI "https://tvnetsolutions.com/clicktv-update/version.json?x=99" || true
+          echo ""
+          echo "===== APEX body ====="
+          curl -s "https://tvnetsolutions.com/clicktv-update/version.json" || true
